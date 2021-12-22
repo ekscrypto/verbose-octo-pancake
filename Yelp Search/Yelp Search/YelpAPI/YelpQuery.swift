@@ -4,6 +4,13 @@
 //
 //  Created by Dave Poirier on 2021-12-21.
 //
+//  Expected YelpQuery behaviors
+//  *) URLSession dataTask created & resumed immediately upon instantiation
+//  *) URLSession dataTask cancelled immediately if YelpQuery is released from memory before HTTP response is received, completion handler NOT called
+//  *) On successful HTTP response, JSON can be decoded properly
+//  *) On unauthorized or other non-successful HTTP response we receive YelpQuery.Errors.unexpectedHttpResponse error with URLResponse object
+//  *) On communication failure (airplane mode, etc), we receive YelpQuery.Errors.unexpectedHttpResponse with no URLResponse but with a defined Error object
+//  *) Regardless if successful or failed, the YelpQuery completion closure is called if the YelpQuery object is still in memory
 
 import Foundation
 
