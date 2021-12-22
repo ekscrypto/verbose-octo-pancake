@@ -27,20 +27,24 @@ final class YelpQueryTests: XCTestCase {
     private func ensureClosuresDontRetainSelf() {
         mockUrlSession.onDataTask = MockUrlSession.defaultOnDataTaskHandler
     }
+    
+    struct BaseExpectations {
+        let dataTaskDispatched = XCTestExpectation(description: "Upon instantiating the query a dataTask should immediately be dispatched on the provided URLSession")
+        let queryCompletionCalled = XCTestExpectation(description: "Upon receiving a successful response, the YelpQuery should call its completion handler")
+    }
 
     func testQuery_successfulResponse_expectsSearchResults() {
-        let dataTaskDispatchedExpectation = XCTestExpectation(description: "Upon instantiating the query a dataTask should immediately be dispatched on the provided URLSession")
-        let queryCompletionCalledExpectation = XCTestExpectation(description: "Upon receiving a successful response, the YelpQuery should call its completion handler")
+        let expectations = BaseExpectations()
         
         mockUrlSession.onDataTask = { request in
-            dataTaskDispatchedExpectation.fulfill()
+            expectations.dataTaskDispatched.fulfill()
             return MockUrlSession.yelpSuccessResponse(request: request)
         }
 
         let query = YelpQuery(with: testDependencies,
                               location: "San Francisco",
                               offset: 0) { searchResultsOrError in
-            queryCompletionCalledExpectation.fulfill()
+            expectations.queryCompletionCalled.fulfill()
             guard case .success(let searchResults) = searchResultsOrError else {
                 XCTFail("Expected a successful HTTP response to provide a YelpSearchResults")
                 return
@@ -50,7 +54,67 @@ final class YelpQueryTests: XCTestCase {
             XCTAssertEqual(searchResults.businesses.first?.name, "Four Barrel Coffee")
             XCTAssertTrue(Thread.isMainThread)
         }
-        wait(for: [dataTaskDispatchedExpectation, queryCompletionCalledExpectation], timeout: defaultTimeout, enforceOrder: true)
+        wait(for: [expectations.dataTaskDispatched, expectations.queryCompletionCalled], timeout: defaultTimeout, enforceOrder: true)
+        _ = query
+    }
+    
+    func testQuery_noHttpResponse_epectsError() {
+        enum TestError: Error {
+            case testError
+        }
+        let expectations = BaseExpectations()
+        mockUrlSession.onDataTask = { _ in
+            expectations.dataTaskDispatched.fulfill()
+            return .networkError(TestError.testError)
+        }
+        let query = YelpQuery(with: testDependencies,
+                              location: "San Francisco",
+                              offset: 0) { searchResultsOrError in
+            expectations.queryCompletionCalled.fulfill()
+            
+            guard case .failure(let failureError) = searchResultsOrError else {
+                XCTFail("Expected a network failure to result in a failed query")
+                return
+            }
+            
+            guard case .unexpectedHttpResponse(let urlResponseOrNil, let errorOrNil) = failureError as? YelpQuery.Errors else {
+                XCTFail("When a network failure occurs, YelpQuery is expected to return both the URLResponse and Error objects wrapped in YelpQuery.Errors.unexpectedHttpResponse object")
+                return
+            }
+            
+            XCTAssertNil(urlResponseOrNil, "No URLResponse should be provided when communication to server failed")
+            XCTAssertEqual(errorOrNil as? TestError, .testError, "The error reported by URLSession should be included as is")
+        }
+        wait(for: [expectations.dataTaskDispatched, expectations.queryCompletionCalled], timeout: defaultTimeout, enforceOrder: true)
+        _ = query
+    }
+    
+    func testQuery_unauthorizedHttpResponse_expectsError() {
+        let expectations = BaseExpectations()
+        mockUrlSession.onDataTask = { urlRequest in
+            expectations.dataTaskDispatched.fulfill()
+            return MockUrlSession.unauthorizedResponse(request: urlRequest)
+        }
+        let query = YelpQuery(with: testDependencies,
+                              location: "San Francisco",
+                              offset: 0) { searchResultsOrError in
+            expectations.queryCompletionCalled.fulfill()
+            
+            guard case .failure(let failureError) = searchResultsOrError else {
+                XCTFail("Expected a network failure to result in a failed query")
+                return
+            }
+            
+            guard case .unexpectedHttpResponse(let urlResponseOrNil, let errorOrNil) = failureError as? YelpQuery.Errors else {
+                XCTFail("When a network failure occurs, YelpQuery is expected to return both the URLResponse and Error objects wrapped in YelpQuery.Errors.unexpectedHttpResponse object")
+                return
+            }
+            
+            XCTAssertNotNil(urlResponseOrNil, "The URLResponse object should be provided when a response is received from the HTTP server")
+            XCTAssertEqual((urlResponseOrNil as? HTTPURLResponse)?.statusCode, 401, "Unauthorized response of MockUrlSession set HTTP status code 401 and this code should be returned as is")
+            XCTAssertNil(errorOrNil, "This value should match the Error? object of the URLSession dataTask completion closure parameter, in this case should be nil")
+        }
+        wait(for: [expectations.dataTaskDispatched, expectations.queryCompletionCalled], timeout: defaultTimeout, enforceOrder: true)
         _ = query
     }
 
@@ -163,6 +227,18 @@ final class YelpQueryTests: XCTestCase {
             }
             let responseContent = contentJson.data(using: .utf8)!
             let httpResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "1.1", headerFields: [
+                "Content-Type": "application/json; charset=utf-8",
+                "Content-Length": String(responseContent.count)
+            ])!
+            return .httpResponse(httpResponse, responseContent)
+        }
+        
+        static func unauthorizedResponse(request: URLRequest) -> MockUrlSession.DesiredOutcome {
+            guard let url = request.url else {
+                fatalError("The URLRequest object forwarded to URLSession should contain a valid URL")
+            }
+            let responseContent = "{\"error\":\"Unauthorized\"}".data(using: .utf8)!
+            let httpResponse = HTTPURLResponse(url: url, statusCode: 401, httpVersion: "1.1", headerFields: [
                 "Content-Type": "application/json; charset=utf-8",
                 "Content-Length": String(responseContent.count)
             ])!
