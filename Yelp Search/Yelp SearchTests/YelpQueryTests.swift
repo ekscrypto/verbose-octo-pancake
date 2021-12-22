@@ -36,7 +36,7 @@ final class YelpQueryTests: XCTestCase {
     func testQuery_successfulResponse_expectsSearchResults() {
         let expectations = BaseExpectations()
         
-        mockUrlSession.onDataTask = { request in
+        mockUrlSession.onDataTask = { request, _ in
             expectations.dataTaskDispatched.fulfill()
             return MockUrlSession.yelpSuccessResponse(request: request)
         }
@@ -63,7 +63,7 @@ final class YelpQueryTests: XCTestCase {
             case testError
         }
         let expectations = BaseExpectations()
-        mockUrlSession.onDataTask = { _ in
+        mockUrlSession.onDataTask = { _, _ in
             expectations.dataTaskDispatched.fulfill()
             return .networkError(TestError.testError)
         }
@@ -91,7 +91,7 @@ final class YelpQueryTests: XCTestCase {
     
     func testQuery_unauthorizedHttpResponse_expectsError() {
         let expectations = BaseExpectations()
-        mockUrlSession.onDataTask = { urlRequest in
+        mockUrlSession.onDataTask = { urlRequest, _ in
             expectations.dataTaskDispatched.fulfill()
             return MockUrlSession.unauthorizedResponse(request: urlRequest)
         }
@@ -117,12 +117,36 @@ final class YelpQueryTests: XCTestCase {
         wait(for: [expectations.dataTaskDispatched, expectations.queryCompletionCalled], timeout: defaultTimeout, enforceOrder: true)
         _ = query
     }
+    
+    func testQuery_releasedBeforeResponse_expectsDataTaskCancelled() {
+        var cancellableDataTask: MockUrlSession.Cancellable?
+        let expectations = BaseExpectations()
+        
+        mockUrlSession.onDataTask = { _, dataTask in
+            cancellableDataTask = dataTask
+            expectations.dataTaskDispatched.fulfill()
+            return .doNothing
+        }
+        var query: YelpQuery? = YelpQuery(with: testDependencies,
+                                          location: "San Francisco",
+                                          offset: 0) { _ in
+            XCTFail("The network request should never have completed in this test, therefore the YelpQuery should never have called its completion closure")
+        }
+        wait(for: [expectations.dataTaskDispatched], timeout: defaultTimeout)
+        
+        _ = query // <- required to avoid Xcode warning for variable written-to but never read
+        query = nil // <- will cause query to be released from memory, which should trigger deinit()
+
+        XCTAssertNotNil(cancellableDataTask, "URLSession dataTask should have been called and custom handler just above should have recorded the associated task")
+        XCTAssertTrue(cancellableDataTask?.cancelCalled ?? false, "When the YelpQuery is released from memory, it's dataTask should be cancelled")
+    }
 
     private final class MockUrlSession: URLSessionDataTaskCompatible {
         
         enum DesiredOutcome {
             case networkError(Error)
             case httpResponse(HTTPURLResponse, Data?)
+            case doNothing
         }
         
         enum Errors: Error {
@@ -132,11 +156,7 @@ final class YelpQueryTests: XCTestCase {
         final class Cancellable: URLSessionDataTaskCancellable {
             var resumeCalled = false
             var cancelCalled = false
-            var onResume: () -> Void
-            
-            init(onResume: @escaping () -> Void) {
-                self.onResume = onResume
-            }
+            var onResume: () -> Void = { /* will be set by MockURLSession dataTask function */ }
             
             func resume() {
                 XCTAssertFalse(resumeCalled)
@@ -152,25 +172,28 @@ final class YelpQueryTests: XCTestCase {
             }
         }
         
-        typealias OnDataTaskHandler = (URLRequest) -> DesiredOutcome
-        static let defaultOnDataTaskHandler: OnDataTaskHandler = { _ in .networkError(Errors.undefined) }
+        typealias OnDataTaskHandler = (URLRequest, Cancellable) -> DesiredOutcome
+        static let defaultOnDataTaskHandler: OnDataTaskHandler = { _, _ in .networkError(Errors.undefined) }
         
-        var onDataTask: (URLRequest) -> DesiredOutcome = MockUrlSession.defaultOnDataTaskHandler
+        var onDataTask: (URLRequest, Cancellable) -> DesiredOutcome = MockUrlSession.defaultOnDataTaskHandler
 
         private let networkQueue = DispatchQueue(label: "YelpQueryTests.MockUrlSession")
 
         func dataTask(with request: URLRequest, onCompletion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskCancellable {
-            let outcome = onDataTask(request)
-            let task = Cancellable(onResume: { [weak self] in
+            let task = Cancellable()
+            let outcome = onDataTask(request, task)
+            task.onResume = { [weak self] in
                 self?.networkQueue.async {
                     switch outcome {
                     case .networkError(let error):
                         onCompletion(nil, nil, error)
                     case .httpResponse(let httpUrlResponse, let optionalData):
                         onCompletion(optionalData, httpUrlResponse, nil)
+                    case .doNothing:
+                        break
                     }
                 }
-            })
+            }
             return task
         }
         
