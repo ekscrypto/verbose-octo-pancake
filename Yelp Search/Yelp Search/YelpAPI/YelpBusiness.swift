@@ -16,7 +16,7 @@ struct YelpBusiness: Codable {
     let rating: Decimal     // Rating for this business (value ranges from 1, 1.5, ... 4.5, 5).
     
     // Additional properties for extended project scope (may be removed later!)
-    let location: String    // Location of this business, including address, city, state, zip code and country.
+    let location: YelpBusinessLocation // Location of this business, including address, city, state, zip code and country.
     let phone: String       // Phone number of the business.
     let reviewCount: Int    // Number of reviews for this business.
     let url: URL            // URL for business page on Yelp.
