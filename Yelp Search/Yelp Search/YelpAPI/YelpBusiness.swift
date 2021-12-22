@@ -9,7 +9,8 @@
 
 import Foundation
 
-struct YelpBusiness: Codable {
+struct YelpBusiness: Codable, Equatable {
+    
     // Minimum criteria items
     let imageUrl: URL       // URL of photo for this business.
     let name: String        // Name of this business.

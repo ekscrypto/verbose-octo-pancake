@@ -11,5 +11,5 @@ Instructions:
 * For security reason, please do not commit your Yelp API Key to the Git repository
 
 Notes:
-* Due to limited time, we assume the project is limited to iPhone and has not been tested on iPad.
-
+* Due to limited time, the project is limited to iPhone -- it was not been tested on iPad.
+* The "Dependencies" struct (HomeViewModel, YelpQuery) are for dependency injection -- for more information this specific compile-time validation check out https://medium.com/swift2go/swift-di-using-struct-dependencies-d272531f871

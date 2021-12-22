@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct YelpBusinessLocation: Codable {
+struct YelpBusinessLocation: Codable, Equatable {
     let city: String
     let country: String
     let address1: String

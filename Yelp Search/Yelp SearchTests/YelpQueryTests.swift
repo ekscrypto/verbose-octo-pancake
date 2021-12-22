@@ -13,12 +13,12 @@ final class YelpQueryTests: XCTestCase {
     private var mockUrlSession: MockUrlSession!
     private var testDependencies: YelpQuery.Dependencies!
     
-    override func setUp() {
+    override func setUpWithError() throws {
         mockUrlSession = MockUrlSession()
         testDependencies = YelpQuery.Dependencies(urlSession: mockUrlSession)
     }
     
-    override func tearDown() {
+    override func tearDownWithError() throws {
         ensureClosuresDontRetainSelf()
         mockUrlSession = nil
         testDependencies = nil
@@ -52,6 +52,7 @@ final class YelpQueryTests: XCTestCase {
             XCTAssertEqual(searchResults.total, 8228)
             XCTAssertEqual(searchResults.businesses.count, 1)
             XCTAssertEqual(searchResults.businesses.first?.name, "Four Barrel Coffee")
+            XCTAssertEqual(searchResults.businesses.first?.imageUrl.absoluteString, "http://s3-media2.fl.yelpcdn.com/bphoto/MmgtASP3l_t4tPCL1iAsCg/o.jpg")
             XCTAssertTrue(Thread.isMainThread)
         }
         wait(for: [expectations.dataTaskDispatched, expectations.queryCompletionCalled], timeout: defaultTimeout, enforceOrder: true)

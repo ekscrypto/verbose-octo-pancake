@@ -14,7 +14,9 @@
 
 import Foundation
 
-class YelpQuery {
+protocol YelpQueryCompatible: AnyObject {}
+
+class YelpQuery: YelpQueryCompatible {
     
     static let timeout: TimeInterval = 10
 
@@ -104,6 +106,6 @@ class YelpQuery {
     
     private func processQuery(_ dataOrNil: Data?, _ urlResponseOrNil: URLResponse?, _ errorOrNil: Error?) {
         let searchResult = Self.result(dataOrNil, urlResponseOrNil, errorOrNil)
-        DispatchQueue.main.async { self.completion(searchResult) }
+        DispatchQueue.main.async { [weak self] in self?.completion(searchResult) }
     }
 }

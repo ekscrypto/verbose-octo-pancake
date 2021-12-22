@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		78B2EE2F27729C62001BF668 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE2E27729C62001BF668 /* AppDelegate.swift */; };
 		78B2EE3127729C62001BF668 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE3027729C62001BF668 /* SceneDelegate.swift */; };
-		78B2EE3327729C62001BF668 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE3227729C62001BF668 /* ViewController.swift */; };
+		78B2EE3327729C62001BF668 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE3227729C62001BF668 /* HomeViewController.swift */; };
 		78B2EE3627729C62001BF668 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78B2EE3427729C62001BF668 /* Main.storyboard */; };
 		78B2EE3827729C64001BF668 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78B2EE3727729C64001BF668 /* Assets.xcassets */; };
 		78B2EE3B27729C64001BF668 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78B2EE3927729C64001BF668 /* LaunchScreen.storyboard */; };
@@ -30,6 +30,10 @@
 		78B2EE752772B3E7001BF668 /* URLSessionInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE6B2772A898001BF668 /* URLSessionInterface.swift */; };
 		78B2EE772772BD38001BF668 /* YelpBusinessLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE762772BD38001BF668 /* YelpBusinessLocation.swift */; };
 		78B2EE782772BDAA001BF668 /* YelpBusinessLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE762772BD38001BF668 /* YelpBusinessLocation.swift */; };
+		78B2EE7A2772CB60001BF668 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE792772CB60001BF668 /* HomeViewModel.swift */; };
+		78B2EE7C2772DABC001BF668 /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE7B2772DABC001BF668 /* HomeViewModelTests.swift */; };
+		78B2EE7D2772DABF001BF668 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE792772CB60001BF668 /* HomeViewModel.swift */; };
+		78B2EE812772E1F0001BF668 /* YelpBusinessGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE802772E1F0001BF668 /* YelpBusinessGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,7 +57,7 @@
 		78B2EE2B27729C62001BF668 /* Yelp Search.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yelp Search.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B2EE2E27729C62001BF668 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		78B2EE3027729C62001BF668 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		78B2EE3227729C62001BF668 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		78B2EE3227729C62001BF668 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		78B2EE3527729C62001BF668 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		78B2EE3727729C64001BF668 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		78B2EE3A27729C64001BF668 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -71,6 +75,9 @@
 		78B2EE6D2772B0B1001BF668 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		78B2EE6F2772B258001BF668 /* YelpQueryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpQueryTests.swift; sourceTree = "<group>"; };
 		78B2EE762772BD38001BF668 /* YelpBusinessLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpBusinessLocation.swift; sourceTree = "<group>"; };
+		78B2EE792772CB60001BF668 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		78B2EE7B2772DABC001BF668 /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
+		78B2EE802772E1F0001BF668 /* YelpBusinessGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpBusinessGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,7 +135,7 @@
 				78B2EE6B2772A898001BF668 /* URLSessionInterface.swift */,
 				78B2EE6027729D45001BF668 /* YelpAPI */,
 				78B2EE3027729C62001BF668 /* SceneDelegate.swift */,
-				78B2EE3227729C62001BF668 /* ViewController.swift */,
+				78B2EE7E2772DACC001BF668 /* HomeView */,
 				78B2EE3427729C62001BF668 /* Main.storyboard */,
 				78B2EE3727729C64001BF668 /* Assets.xcassets */,
 				78B2EE3927729C64001BF668 /* LaunchScreen.storyboard */,
@@ -140,6 +147,8 @@
 		78B2EE4427729C65001BF668 /* Yelp SearchTests */ = {
 			isa = PBXGroup;
 			children = (
+				78B2EE7F2772E1DD001BF668 /* Generators */,
+				78B2EE7B2772DABC001BF668 /* HomeViewModelTests.swift */,
 				78B2EE6F2772B258001BF668 /* YelpQueryTests.swift */,
 			);
 			path = "Yelp SearchTests";
@@ -157,12 +166,29 @@
 		78B2EE6027729D45001BF668 /* YelpAPI */ = {
 			isa = PBXGroup;
 			children = (
-				78B2EE5E27729D3F001BF668 /* YelpSearchResults.swift */,
 				78B2EE6127729D91001BF668 /* YelpBusiness.swift */,
 				78B2EE762772BD38001BF668 /* YelpBusinessLocation.swift */,
 				78B2EE692772A381001BF668 /* YelpQuery.swift */,
+				78B2EE5E27729D3F001BF668 /* YelpSearchResults.swift */,
 			);
 			path = YelpAPI;
+			sourceTree = "<group>";
+		};
+		78B2EE7E2772DACC001BF668 /* HomeView */ = {
+			isa = PBXGroup;
+			children = (
+				78B2EE3227729C62001BF668 /* HomeViewController.swift */,
+				78B2EE792772CB60001BF668 /* HomeViewModel.swift */,
+			);
+			path = HomeView;
+			sourceTree = "<group>";
+		};
+		78B2EE7F2772E1DD001BF668 /* Generators */ = {
+			isa = PBXGroup;
+			children = (
+				78B2EE802772E1F0001BF668 /* YelpBusinessGenerator.swift */,
+			);
+			path = Generators;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -300,8 +326,9 @@
 				78B2EE5F27729D3F001BF668 /* YelpSearchResults.swift in Sources */,
 				78B2EE6E2772B0B1001BF668 /* Secrets.swift in Sources */,
 				78B2EE6C2772A898001BF668 /* URLSessionInterface.swift in Sources */,
+				78B2EE7A2772CB60001BF668 /* HomeViewModel.swift in Sources */,
 				78B2EE772772BD38001BF668 /* YelpBusinessLocation.swift in Sources */,
-				78B2EE3327729C62001BF668 /* ViewController.swift in Sources */,
+				78B2EE3327729C62001BF668 /* HomeViewController.swift in Sources */,
 				78B2EE6A2772A381001BF668 /* YelpQuery.swift in Sources */,
 				78B2EE6227729D91001BF668 /* YelpBusiness.swift in Sources */,
 				78B2EE2F27729C62001BF668 /* AppDelegate.swift in Sources */,
@@ -314,12 +341,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				78B2EE732772B393001BF668 /* YelpSearchResults.swift in Sources */,
+				78B2EE7D2772DABF001BF668 /* HomeViewModel.swift in Sources */,
 				78B2EE702772B258001BF668 /* YelpQueryTests.swift in Sources */,
 				78B2EE782772BDAA001BF668 /* YelpBusinessLocation.swift in Sources */,
+				78B2EE7C2772DABC001BF668 /* HomeViewModelTests.swift in Sources */,
 				78B2EE742772B397001BF668 /* YelpBusiness.swift in Sources */,
 				78B2EE712772B389001BF668 /* Secrets.swift in Sources */,
 				78B2EE752772B3E7001BF668 /* URLSessionInterface.swift in Sources */,
 				78B2EE722772B38E001BF668 /* YelpQuery.swift in Sources */,
+				78B2EE812772E1F0001BF668 /* YelpBusinessGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
