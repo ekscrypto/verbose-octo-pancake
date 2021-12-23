@@ -95,6 +95,66 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertEqual(homeViewModel.businesses, [])
     }
     
+    func testLoadMore_emptySearchLocation_noQueryDispatched() {
+        let homeViewModel = HomeViewModel(with: testDependencies)
+        homeViewModel.searchLocation = " "
+        onYelpQueryAllocation = { _ in XCTFail("No query should be dispatched by loadMore when the search location is empty") }
+        homeViewModel.loadMore()
+    }
+    
+    func testLoadMore_withInProgressQuery_noAdditionalQueryDispatched() {
+        let homeViewModel = HomeViewModel(with: testDependencies)
+        let initialQueryDispatchedExpectation = XCTestExpectation(description: "When searchLocation is set with non-empty value a query should immediately be dispatched")
+        onYelpQueryAllocation = { _ in
+            initialQueryDispatchedExpectation.fulfill()
+        }
+        homeViewModel.searchLocation = someRandomString()
+        wait(for: [initialQueryDispatchedExpectation], timeout: defaultTimeout)
+        onYelpQueryAllocation = { _ in XCTFail("When a query is already in progress, loadMore should not trigger another query") }
+        homeViewModel.loadMore()
+    }
+    
+    func testLoadMore_initialResultsReceived_additionalQueryWithOffsetDispatched() {
+        let homeViewModel = HomeViewModel(with: testDependencies)
+        
+        // prepare data to use
+        let firstSetOfBusinesses = YelpBusinessGenerator.generate(count: 50)
+        let secondSetOfBusinesses = YelpBusinessGenerator.generate(count: Int.random(in: 1...50))
+        var expectedCombinedSet = firstSetOfBusinesses
+        expectedCombinedSet.append(contentsOf: secondSetOfBusinesses)
+        let firstApiResult = YelpSearchResults(total: expectedCombinedSet.count, businesses: firstSetOfBusinesses)
+        let secondApiResult = YelpSearchResults(total: expectedCombinedSet.count, businesses: secondSetOfBusinesses)
+
+        let firstQueryDispatchedExpectation = XCTestExpectation(description: "After setting the search location the first query should be immediately dispatched")
+
+        onYelpQueryAllocation = { query in
+            query.send(results: YelpQuery.SearchResult(catching: { firstApiResult }), then: {
+                firstQueryDispatchedExpectation.fulfill()
+            })
+        }
+        homeViewModel.searchLocation = someRandomString()
+        wait(for: [firstQueryDispatchedExpectation], timeout: defaultTimeout)
+        XCTAssertEqual(homeViewModel.businesses, firstSetOfBusinesses)
+
+        let secondQueryDispatchedExpectation = XCTestExpectation(description: "After calling loadMore when the total received is below the grand total there should be another API call made")
+        onYelpQueryAllocation = { query in
+            XCTAssertEqual(query.offset, firstSetOfBusinesses.count, "The offset of the loadMore generated query should be equal to the number of results already received")
+            query.send(results: YelpQuery.SearchResult(catching: { secondApiResult })) {
+                secondQueryDispatchedExpectation.fulfill()
+            }
+        }
+        homeViewModel.loadMore()
+        wait(for: [secondQueryDispatchedExpectation], timeout: defaultTimeout)
+        XCTAssertEqual(homeViewModel.businesses, expectedCombinedSet)
+    }
+    
+    func testLoadMore_allResultsLoaded_noQueryDispatched() {
+        let homeViewModel = HomeViewModel(with: testDependencies)
+        _ = prepareAndSendInitialLocations(viewModel: homeViewModel, expectedLocation: someRandomString())
+        onYelpQueryAllocation = { _ in XCTFail("When all results have been loaded, loadMore should not trigger a query") }
+        homeViewModel.loadMore()
+    }
+    
     private final class MockYelpQuery: YelpQueryCompatible {
         let completion: YelpQuery.Completion
         let location: String

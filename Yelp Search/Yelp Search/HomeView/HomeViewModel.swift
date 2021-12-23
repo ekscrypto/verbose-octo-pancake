@@ -27,9 +27,11 @@ class HomeViewModel {
         didSet { self.resetResultsAndDispatchQueryIfNeeded() }
     }
     
-    var businesses: [YelpBusiness] = []
+    private(set) var businesses: [YelpBusiness] = []
+    private var totalMatchesOnServer = 0
     
     func loadMore() {
+        guard pendingQuery == nil, businesses.count < totalMatchesOnServer else { return }
         dispatchYelpQuery(searchLocation, offset: businesses.count)
     }
     
@@ -42,6 +44,7 @@ class HomeViewModel {
     private func resetResultsAndDispatchQueryIfNeeded() {
         businesses.removeAll()
         pendingQuery = nil
+        totalMatchesOnServer = 0
         dispatchYelpQuery(searchLocation, offset: 0)
     }
     
@@ -63,6 +66,7 @@ class HomeViewModel {
             _ = error // We ignore the error here, typically we would send some anonymized analytics
         case .success(let searchResults):
             businesses.append(contentsOf: searchResults.businesses)
+            totalMatchesOnServer = searchResults.total
         }
     }
 }
