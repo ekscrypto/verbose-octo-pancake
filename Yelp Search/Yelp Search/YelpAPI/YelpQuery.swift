@@ -76,6 +76,7 @@ class YelpQuery: YelpQueryCompatible {
             cachePolicy: .returnCacheDataElseLoad,
             timeoutInterval: Self.timeout)
         yelpRequest.addValue("Bearer \(Secrets.yelpApiKey)", forHTTPHeaderField: "Authorization")
+        print("\(Self.self).\(#line) Query: \(yelpRequest.url!)")
         return yelpRequest
     }
     

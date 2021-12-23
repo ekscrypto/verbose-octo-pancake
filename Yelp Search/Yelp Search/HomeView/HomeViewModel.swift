@@ -7,7 +7,14 @@
 
 import Foundation
 
-class HomeViewModel {
+protocol HomeViewModelCompatible: AnyObject {
+    var searchLocation: String { get set }
+    var businesses: [YelpBusiness] { get }
+    var onBusinesses: ([YelpBusiness]) -> Void { get set }
+    func loadMore()
+}
+
+final class HomeViewModel: HomeViewModelCompatible {
     
     struct Dependencies {
         let yelpQueryAllocator: (_ location: String, _ offset: Int, _ completion: YelpQuery.Completion?) -> YelpQueryCompatible
@@ -27,7 +34,13 @@ class HomeViewModel {
         didSet { self.resetResultsAndDispatchQueryIfNeeded() }
     }
     
-    private(set) var businesses: [YelpBusiness] = []
+    private(set) var businesses: [YelpBusiness] = [] {
+        didSet {
+            onBusinesses(businesses)
+        }
+    }
+    var onBusinesses: ([YelpBusiness]) -> Void = { _ in /* by default do nothing */ }
+    
     private var totalMatchesOnServer = 0
     
     func loadMore() {

@@ -9,16 +9,9 @@
 
 import Foundation
 
-struct YelpBusiness: Codable, Equatable {
-    
+struct YelpBusiness: Codable, Equatable, Hashable {
     // Minimum criteria items
-    let imageUrl: URL       // URL of photo for this business.
+    let imageUrl: String    // URL of photo for this business, empty string if undefined
     let name: String        // Name of this business.
-    let rating: Decimal     // Rating for this business (value ranges from 1, 1.5, ... 4.5, 5).
-    
-    // Additional properties for extended project scope (may be removed later!)
-    let location: YelpBusinessLocation // Location of this business, including address, city, state, zip code and country.
-    let phone: String       // Phone number of the business.
-    let reviewCount: Int    // Number of reviews for this business.
-    let url: URL            // URL for business page on Yelp.
+    let rating: Float     // Rating for this business (value ranges from 1, 1.5, ... 4.5, 5).
 }
