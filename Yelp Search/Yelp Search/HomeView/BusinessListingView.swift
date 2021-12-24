@@ -78,7 +78,8 @@ class BusinessListingView: UIView {
             nameLabelReferenceView.centerXAnchor.constraint(equalTo: ratingLabel.centerXAnchor),
             
             nameLabel.centerXAnchor.constraint(equalTo: nameLabelReferenceView.centerXAnchor),
-            nameLabel.centerYAnchor.constraint(equalTo: nameLabelReferenceView.centerYAnchor)
+            nameLabel.centerYAnchor.constraint(equalTo: nameLabelReferenceView.centerYAnchor),
+            nameLabel.widthAnchor.constraint(lessThanOrEqualTo: nameLabelReferenceView.heightAnchor, constant: -(2.0 * Style.labelPadding))
         ])
     }
     
@@ -88,7 +89,8 @@ class BusinessListingView: UIView {
         label.alpha = Style.ratingOpacity
         label.layer.transform = CATransform3DRotate(CATransform3DIdentity, .pi / 2.0, 0, 0, 1)
         label.numberOfLines = 2
-        label.lineBreakMode = .byWordWrapping
+        label.lineBreakMode = .byTruncatingTail
+        label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: UIFont.systemFontSize * 1.5)
         return label
     }
