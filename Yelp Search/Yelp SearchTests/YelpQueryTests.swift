@@ -52,7 +52,7 @@ final class YelpQueryTests: XCTestCase {
             XCTAssertEqual(searchResults.total, 8228)
             XCTAssertEqual(searchResults.businesses.count, 1)
             XCTAssertEqual(searchResults.businesses.first?.name, "Four Barrel Coffee")
-            XCTAssertEqual(searchResults.businesses.first?.imageUrl.absoluteString, "http://s3-media2.fl.yelpcdn.com/bphoto/MmgtASP3l_t4tPCL1iAsCg/o.jpg")
+            XCTAssertEqual(searchResults.businesses.first?.imageUrl, "http://s3-media2.fl.yelpcdn.com/bphoto/MmgtASP3l_t4tPCL1iAsCg/o.jpg")
             XCTAssertTrue(Thread.isMainThread)
         }
         wait(for: [expectations.dataTaskDispatched, expectations.queryCompletionCalled], timeout: defaultTimeout, enforceOrder: true)
