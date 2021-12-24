@@ -33,6 +33,7 @@
 		78B2EE8527740F17001BF668 /* BusinessListingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE8427740F17001BF668 /* BusinessListingCell.swift */; };
 		78B2EE8727740F34001BF668 /* BusinessListingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE8627740F34001BF668 /* BusinessListingView.swift */; };
 		78B2EE8927742903001BF668 /* KeyboardAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE8827742903001BF668 /* KeyboardAnimator.swift */; };
+		78B2EE8B27757003001BF668 /* HomeDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EE8A27757003001BF668 /* HomeDiffableDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		78B2EE8427740F17001BF668 /* BusinessListingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessListingCell.swift; sourceTree = "<group>"; };
 		78B2EE8627740F34001BF668 /* BusinessListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessListingView.swift; sourceTree = "<group>"; };
 		78B2EE8827742903001BF668 /* KeyboardAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAnimator.swift; sourceTree = "<group>"; };
+		78B2EE8A27757003001BF668 /* HomeDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDiffableDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,11 +151,12 @@
 		78B2EE7E2772DACC001BF668 /* HomeView */ = {
 			isa = PBXGroup;
 			children = (
+				78B2EE8427740F17001BF668 /* BusinessListingCell.swift */,
+				78B2EE8627740F34001BF668 /* BusinessListingView.swift */,
+				78B2EE8A27757003001BF668 /* HomeDiffableDataSource.swift */,
 				78B2EE3227729C62001BF668 /* HomeViewController.swift */,
 				78B2EE792772CB60001BF668 /* HomeViewModel.swift */,
 				78B2EE8227740D8D001BF668 /* HomeView.swift */,
-				78B2EE8427740F17001BF668 /* BusinessListingCell.swift */,
-				78B2EE8627740F34001BF668 /* BusinessListingView.swift */,
 			);
 			path = HomeView;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				78B2EE2F27729C62001BF668 /* AppDelegate.swift in Sources */,
 				78B2EE8527740F17001BF668 /* BusinessListingCell.swift in Sources */,
 				78B2EE3127729C62001BF668 /* SceneDelegate.swift in Sources */,
+				78B2EE8B27757003001BF668 /* HomeDiffableDataSource.swift in Sources */,
 				78B2EE8727740F34001BF668 /* BusinessListingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

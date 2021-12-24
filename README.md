@@ -13,3 +13,4 @@ Instructions:
 Notes:
 * Due to limited time, the project is limited to iPhone -- it was not been tested on iPad.
 * The "Dependencies" struct (HomeViewModel, YelpQuery) are for dependency injection -- for more information this specific compile-time validation check out https://medium.com/swift2go/swift-di-using-struct-dependencies-d272531f871
+* Creative liberty was taken to better showcase the images for each location, so a larger image than a simple thumbnail was used

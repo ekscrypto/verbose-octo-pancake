@@ -44,7 +44,9 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
     }
     
     private func constructViewLayout() {
-        [searchContainer, searchTextField, tableView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [searchContainer, searchTextField, tableView]
+            .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
         self.addSubview(searchContainer)
         self.addSubview(tableView)
         searchContainer.addSubview(searchTextField)

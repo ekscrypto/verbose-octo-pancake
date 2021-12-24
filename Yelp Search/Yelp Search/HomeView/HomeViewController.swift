@@ -12,10 +12,10 @@ final class HomeViewController: UIViewController {
     private let viewModel: HomeViewModelCompatible = HomeViewModel()
     private let homeView: HomeViewCompatible = HomeView()
     
-    private lazy var tableDiffableDataSource = UITableViewDiffableDataSource<Int, YelpBusiness>(tableView: homeView.tableView) { tableView, indexPath, yelpBusiness in
-        
+    private lazy var tableDiffableDataSource = HomeDiffableDataSource(tableView: homeView.tableView) { [weak self] tableView, indexPath, yelpBusiness in
         let cell = tableView.dequeueReusableCell(withIdentifier: BusinessListingCell.reuseIdentifier, for: indexPath)
         (cell as? BusinessListingCell)?.business = yelpBusiness
+        self?.loadMoreIfNeeded(row: indexPath.row)
         return cell
     }
     
@@ -23,6 +23,12 @@ final class HomeViewController: UIViewController {
         self.view = homeView
         attachDataSourceToTableView()
         attachSearchTextFieldToViewModel()
+    }
+    
+    private func loadMoreIfNeeded(row: Int) {
+        if row > viewModel.businesses.count - 5 {
+            viewModel.loadMore()
+        }
     }
     
     private func attachDataSourceToTableView() {
