@@ -16,17 +16,21 @@ class BusinessListingView: UIView {
     }
     
     enum Style {
+        static let labelPadding: CGFloat = 25.0
         static let ratingCornerRadius: CGFloat = 6.0
         static let ratingOpacity: CGFloat = 0.7
         static let ratingPadding: CGFloat = 25.0
         static let ratingWidthRatio: CGFloat = 0.2
-        static let labelPadding: CGFloat = 25.0
+        static let yelpLogoOpacity: CGFloat = 1.0
     }
+    
+    private static let yelpLogo: UIImage = UIImage(named: "YelpLogo")!
     
     private let imageView: UIImageView = prepareImageView()
     private let nameLabelReferenceView: UIView = prepareNameLabelReferenceView()
     private let nameLabel: UILabel = prepareNameLabel()
     private let ratingLabel: UILabel = prepareRatingLabel()
+    private let ratingTitleLabel: UILabel = prepareRatingTitleLabel()
     private lazy var designed: Bool = self.implementDesign()
     
     override func layoutSubviews() {
@@ -41,11 +45,12 @@ class BusinessListingView: UIView {
     }
     
     private func constructViewLayout() {
-        [nameLabel, nameLabelReferenceView, ratingLabel, imageView]
+        [imageView, nameLabel, nameLabelReferenceView, ratingLabel, ratingTitleLabel]
             .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         self.addSubview(imageView)
         self.addSubview(ratingLabel)
+        self.addSubview(ratingTitleLabel)
         self.addSubview(nameLabelReferenceView)
         self.addSubview(nameLabel)
         self.clipsToBounds = true
@@ -57,6 +62,10 @@ class BusinessListingView: UIView {
             ratingLabel.heightAnchor.constraint(equalTo: ratingLabel.widthAnchor),
             ratingLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -Style.ratingPadding),
             ratingLabel.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -Style.ratingPadding),
+            
+            ratingTitleLabel.centerXAnchor.constraint(equalTo: ratingLabel.centerXAnchor),
+            ratingTitleLabel.bottomAnchor.constraint(equalTo: ratingLabel.bottomAnchor),
+            ratingTitleLabel.topAnchor.constraint(equalTo: ratingLabel.centerYAnchor),
             
             imageView.leftAnchor.constraint(equalTo: self.leftAnchor),
             imageView.rightAnchor.constraint(equalTo: self.rightAnchor),
@@ -106,9 +115,22 @@ class BusinessListingView: UIView {
         return label
     }
     
+    private static func prepareRatingTitleLabel() -> UILabel {
+        let label = UILabel()
+        label.textColor = .label
+        label.font = .systemFont(ofSize: UIFont.systemFontSize * 0.5)
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.text = "/5.0 rating"
+        label.alpha = Style.ratingOpacity
+        return label
+    }
+    
     private static func prepareImageView() -> UIImageView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.image = Self.yelpLogo
+        imageView.alpha = Style.yelpLogoOpacity
         return imageView
     }
     
@@ -127,7 +149,8 @@ class BusinessListingView: UIView {
     }
     
     private func updateImage() {
-        imageView.image = nil
+        imageView.image = Self.yelpLogo
+        imageView.alpha = Style.yelpLogoOpacity
         guard let imageUrlString = business?.imageUrl,
               !imageUrlString.isEmpty,
               let imageUrl = URL(string: imageUrlString)
@@ -153,5 +176,6 @@ class BusinessListingView: UIView {
             return
         }
         imageView.image = UIImage(data: imageData)
+        imageView.alpha = 1.0
     }
 }

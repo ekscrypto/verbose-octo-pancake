@@ -35,11 +35,11 @@ final class HomeViewController: UIViewController {
         homeView.tableView.register(BusinessListingCell.self, forCellReuseIdentifier: BusinessListingCell.reuseIdentifier)
         _ = tableDiffableDataSource
         viewModel.onBusinesses = { [weak self] businesses in self?.prepareSnapshot(businesses) }
+        viewModel.onPendingQuery = { [weak self] pendingQuery in self?.homeView.showActivity = pendingQuery }
     }
     
     private func attachSearchTextFieldToViewModel() {
         homeView.onSearchLocation = { [weak self] searchLocation in
-            print("\(Self.self).\(#line) Search location: \(searchLocation)")
             self?.viewModel.searchLocation = searchLocation
         }
     }

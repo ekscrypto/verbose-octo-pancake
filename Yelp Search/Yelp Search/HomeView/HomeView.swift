@@ -10,24 +10,38 @@ import UIKit
 protocol HomeViewCompatible: UIView {
     var tableView: UITableView { get }
     var onSearchLocation: (String) -> Void { get set }
+    var showActivity: Bool { get set }
 }
 
 final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
     
     // Interfaces exposed to view controller
-    private(set) lazy var tableView: UITableView = prepareTableView()
+    let tableView: UITableView = prepareTableView()
     var onSearchLocation: (String) -> Void = { _ in /* by default do nothing */ }
+    var showActivity: Bool = false {
+        didSet {
+            if showActivity {
+                activityIndicator.startAnimating()
+            } else {
+                activityIndicator.stopAnimating()
+            }
+        }
+    }
     
     enum Style {
+        static let activityIndicatorPadding: CGFloat = 15.0
         static let searchTextFieldHeight: CGFloat = 40.0
         static let searchTextFieldSideMargins: CGFloat = 15.0
+        static let yelpLogoOpacity: CGFloat = 1.0
     }
 
     private lazy var designed: Bool = implementDesign()
+    private let activityIndicator: UIActivityIndicatorView = prepareActivityIndicator()
     private var keyboardAnimator: KeyboardAnimator?
     private var keyboardHeightConstraint: NSLayoutConstraint?
     private lazy var searchTextField: UITextField = prepareSearchTextField()
-    private lazy var searchContainer: UIView = prepareSearchContainer()
+    private let searchContainer: UIView = prepareSearchContainer()
+    private let yelpLogoImageView: UIImageView = prepareYelpLogoImageView()
     
     override func layoutSubviews() {
         _ = designed
@@ -44,11 +58,13 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
     }
     
     private func constructViewLayout() {
-        [searchContainer, searchTextField, tableView]
+        [activityIndicator, searchContainer, searchTextField, tableView, yelpLogoImageView]
             .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         self.addSubview(searchContainer)
+        self.addSubview(yelpLogoImageView)
         self.addSubview(tableView)
+        self.addSubview(activityIndicator)
         searchContainer.addSubview(searchTextField)
     }
     
@@ -75,19 +91,35 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
             tableView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: self.topAnchor),
             
+            yelpLogoImageView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
+            yelpLogoImageView.centerYAnchor.constraint(equalTo: tableView.centerYAnchor),
+            yelpLogoImageView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            yelpLogoImageView.heightAnchor.constraint(equalTo: yelpLogoImageView.widthAnchor),
+            
+            activityIndicator.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: Style.activityIndicatorPadding),
+            activityIndicator.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+            
             keyboardHeightConstraint!
         ])
     }
     
-    private func prepareTableView() -> UITableView {
+    private static func prepareActivityIndicator() -> UIActivityIndicatorView {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.tintColor = .systemGray3
+        return activityIndicator
+    }
+    
+    private static func prepareTableView() -> UITableView {
         let view = UITableView()
         view.insetsContentViewsToSafeArea = true
         view.clipsToBounds = true
         view.keyboardDismissMode = .onDrag
+        view.backgroundColor = .clear
         return view
     }
     
-    private func prepareSearchContainer() -> UIView {
+    private static func prepareSearchContainer() -> UIView {
         let view = UIView()
         view.backgroundColor = .systemFill
         return view
@@ -107,6 +139,15 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
         textField.placeholder = "Enter a location to search…"
         textField.backgroundColor = .clear
         return textField
+    }
+    
+    private static func prepareYelpLogoImageView() -> UIImageView {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "YelpLogo")
+        imageView.contentMode = .scaleAspectFit
+        imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        imageView.alpha = Style.yelpLogoOpacity
+        return imageView
     }
     
     @objc

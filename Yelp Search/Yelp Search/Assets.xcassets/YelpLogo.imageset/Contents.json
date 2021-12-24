@@ -1,6 +1,7 @@
 {
-  "colors" : [
+  "images" : [
     {
+      "filename" : "Yelp-Logo-700x394.png",
       "idiom" : "universal"
     }
   ],

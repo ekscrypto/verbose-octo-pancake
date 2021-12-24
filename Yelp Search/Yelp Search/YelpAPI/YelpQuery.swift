@@ -76,11 +76,10 @@ class YelpQuery: YelpQueryCompatible {
             cachePolicy: .returnCacheDataElseLoad,
             timeoutInterval: Self.timeout)
         yelpRequest.addValue("Bearer \(Secrets.yelpApiKey)", forHTTPHeaderField: "Authorization")
-        print("\(Self.self).\(#line) Query: \(yelpRequest.url!)")
         return yelpRequest
     }
     
-    private static func result(_ dataOrNil: Data?, _ urlResponseOrNil: URLResponse?, _ errorOrNil: Error?) -> SearchResult {
+    private func extractResults(_ dataOrNil: Data?, _ urlResponseOrNil: URLResponse?, _ errorOrNil: Error?) -> SearchResult {
         SearchResult(catching: {
             guard let httpResponse = urlResponseOrNil as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode),
@@ -106,7 +105,7 @@ class YelpQuery: YelpQueryCompatible {
     }
     
     private func processQuery(_ dataOrNil: Data?, _ urlResponseOrNil: URLResponse?, _ errorOrNil: Error?) {
-        let searchResult = Self.result(dataOrNil, urlResponseOrNil, errorOrNil)
+        let searchResult = extractResults(dataOrNil, urlResponseOrNil, errorOrNil)
         DispatchQueue.main.async { [weak self] in self?.completion(searchResult) }
     }
 }

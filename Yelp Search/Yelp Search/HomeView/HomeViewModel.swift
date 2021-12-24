@@ -11,6 +11,7 @@ protocol HomeViewModelCompatible: AnyObject {
     var searchLocation: String { get set }
     var businesses: [YelpBusiness] { get }
     var onBusinesses: ([YelpBusiness]) -> Void { get set }
+    var onPendingQuery: (Bool) -> Void { get set }
     func loadMore()
 }
 
@@ -40,6 +41,7 @@ final class HomeViewModel: HomeViewModelCompatible {
         }
     }
     var onBusinesses: ([YelpBusiness]) -> Void = { _ in /* by default do nothing */ }
+    var onPendingQuery: (Bool) -> Void = { _ in /* by default do nothing */ }
     
     private var totalMatchesOnServer = 0
     
@@ -52,7 +54,11 @@ final class HomeViewModel: HomeViewModelCompatible {
         self.dep = dependencies
     }
     
-    private var pendingQuery: YelpQueryCompatible?
+    private var pendingQuery: YelpQueryCompatible? {
+        didSet {
+            onPendingQuery(pendingQuery != nil)
+        }
+    }
     
     private func resetResultsAndDispatchQueryIfNeeded() {
         businesses.removeAll()
