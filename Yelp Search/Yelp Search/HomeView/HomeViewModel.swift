@@ -12,6 +12,7 @@ protocol HomeViewModelCompatible: AnyObject {
     var businesses: [YelpBusiness] { get }
     var onBusinesses: ([YelpBusiness]) -> Void { get set }
     var onPendingQuery: (Bool) -> Void { get set }
+    var onConnectivityError: (Bool) -> Void { get set }
     func loadMore()
 }
 
@@ -41,6 +42,7 @@ final class HomeViewModel: HomeViewModelCompatible {
         }
     }
     var onBusinesses: ([YelpBusiness]) -> Void = { _ in /* by default do nothing */ }
+    var onConnectivityError: (Bool) -> Void = { _ in /* by default do nothing */ }
     var onPendingQuery: (Bool) -> Void = { _ in /* by default do nothing */ }
     
     private var totalMatchesOnServer = 0
@@ -68,6 +70,7 @@ final class HomeViewModel: HomeViewModelCompatible {
     }
     
     private func dispatchYelpQuery(_ location: String, offset: Int) {
+        onConnectivityError(false)
         let trimmedLocation = location.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedLocation.isEmpty else {
             return
@@ -81,8 +84,8 @@ final class HomeViewModel: HomeViewModelCompatible {
     private func processYelpResult(_ searchResultsOrError: YelpQuery.SearchResult) {
         pendingQuery = nil
         switch searchResultsOrError {
-        case .failure(let error):
-            _ = error // We ignore the error here, typically we would send some anonymized analytics
+        case .failure(_):
+            onConnectivityError(true)
         case .success(let searchResults):
             businesses.append(contentsOf: searchResults.businesses)
             totalMatchesOnServer = searchResults.total

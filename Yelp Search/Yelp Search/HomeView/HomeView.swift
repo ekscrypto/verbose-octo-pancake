@@ -11,6 +11,7 @@ protocol HomeViewCompatible: UIView {
     var tableView: UITableView { get }
     var onSearchLocation: (String) -> Void { get set }
     var showActivity: Bool { get set }
+    var showConnectivityError: Bool { get set }
 }
 
 final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
@@ -27,6 +28,11 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
             }
         }
     }
+    var showConnectivityError: Bool = false {
+        didSet {
+            connectivityErrorView.isHidden = !showConnectivityError
+        }
+    }
     
     enum Style {
         static let activityIndicatorPadding: CGFloat = 15.0
@@ -37,6 +43,7 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
 
     private lazy var designed: Bool = implementDesign()
     private let activityIndicator: UIActivityIndicatorView = prepareActivityIndicator()
+    private let connectivityErrorView: UIView = prepareConnectivityErrorView()
     private var keyboardAnimator: KeyboardAnimator?
     private var keyboardHeightConstraint: NSLayoutConstraint?
     private lazy var searchTextField: UITextField = prepareSearchTextField()
@@ -58,13 +65,14 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
     }
     
     private func constructViewLayout() {
-        [activityIndicator, searchContainer, searchTextField, tableView, yelpLogoImageView]
+        [activityIndicator, connectivityErrorView, searchContainer, searchTextField, tableView, yelpLogoImageView]
             .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         self.addSubview(searchContainer)
         self.addSubview(yelpLogoImageView)
         self.addSubview(tableView)
         self.addSubview(activityIndicator)
+        self.addSubview(connectivityErrorView)
         searchContainer.addSubview(searchTextField)
     }
     
@@ -99,6 +107,10 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
             activityIndicator.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: Style.activityIndicatorPadding),
             activityIndicator.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
             
+            connectivityErrorView.leftAnchor.constraint(equalTo: self.leftAnchor),
+            connectivityErrorView.rightAnchor.constraint(equalTo: self.rightAnchor),
+            connectivityErrorView.bottomAnchor.constraint(equalTo: searchContainer.topAnchor),
+            
             keyboardHeightConstraint!
         ])
     }
@@ -108,6 +120,18 @@ final class HomeView: UIView, HomeViewCompatible, UITextFieldDelegate {
         activityIndicator.hidesWhenStopped = true
         activityIndicator.tintColor = .systemGray3
         return activityIndicator
+    }
+    
+    private static func prepareConnectivityErrorView() -> UIView {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.textColor = .black
+        label.backgroundColor = .red
+        label.font = .systemFont(ofSize: UIFont.systemFontSize)
+        label.text = "Connectivity issue detected!"
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
     }
     
     private static func prepareTableView() -> UITableView {
